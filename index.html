@@ -40,7 +40,7 @@
             const data = await response.json();
             const luckyNumber = data[`${year}-${month}-${day}`];
             console.log(luckyNumber);
-            document.getElementById("lucky-number")[0].innerHTML = luckyNumber;
+            document.getElementById("lucky-number").innerHTML = luckyNumber;
           }
         } catch (error) {
           console.log(error);
