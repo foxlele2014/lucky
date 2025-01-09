@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lucky Number</title>
+    <style>
+      .container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Lucky Number</h1>
+      <div>
+        <img src="./images/lucky.png" alt="lucky" />
+      </div>
+      <p id="lucky-number"></p>
+    </div>
+    <script type="module">
+      async function getLuckyNumber() {
+        // 获取现在的时间
+        const now = new Date();
+        const year = now.getFullYear();
+        // 补零处理
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const filePath = `./files/${year}-${month}.json`;
+        console.log(filePath);
+        // 获取文件内容
+        try {
+          const response = await fetch(filePath);
+          if (response.ok) {
+            const data = await response.json();
+            const luckyNumber = data[`${year}-${month}-${day}`];
+            console.log(luckyNumber);
+            document.getElementById("lucky-number")[0].innerHTML = luckyNumber;
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      window.addEventListener("load", getLuckyNumber);
+    </script>
+  </body>
+</html>
