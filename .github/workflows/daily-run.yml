@@ -1,0 +1,48 @@
+name: Daily Update Numbers
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-numbers:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # 1. 检出 main 分支获取 Python 脚本
+    - name: Checkout main
+      uses: actions/checkout@v2
+      with:
+        ref: main
+    
+    # 2. 设置 Python
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    
+    # 3. 运行 Python 脚本
+    - name: Run Python script
+      run: |
+        python scripts/num.py
+        ls -la files/  # 检查生成的文件
+    
+    # 4. 检出 gh-pages 分支
+    - name: Checkout gh-pages
+      uses: actions/checkout@v2
+      with:
+        ref: gh-pages
+        path: gh-pages
+    
+    # 5. 更新文件
+    - name: Update files
+      run: |
+        mkdir -p gh-pages/files
+        cp -r files/* gh-pages/files/
+        cd gh-pages
+        git config user.name 'GitHub Action'
+        git config user.email 'action@github.com'
+        git add -A
+        git commit -m "Update numbers $(date -u)" || exit 0
+        git push
