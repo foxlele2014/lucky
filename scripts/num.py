@@ -62,7 +62,6 @@ def giveNumByWeekDay():
   elif weekDay == 1 or weekDay == 3 or weekDay == 6:
     num = guessRichCount(33, 16, 6, 1)
   else:
-    num = "今天休息"
     print("今天不开奖")
 
   filePath = './files/' + month + '.json';
@@ -71,10 +70,13 @@ def giveNumByWeekDay():
   # 检查文件是否存在
   if os.path.exists(filePath):
     with open(filePath, 'r', encoding='utf-8') as f:
-      data = json.load(f)
-      data[today] = num
+      raw_data = json.load(f)
+      new_data = {
+        today: num
+      }
+      raw_data.update(new_data)
       with open(filePath, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False)
+        json.dump(raw_data, f, ensure_ascii=False)
   else:
     with open(filePath, 'w', encoding='utf-8') as f:
       data = {today: num}
