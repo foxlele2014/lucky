@@ -2,7 +2,7 @@ name: Daily Update Numbers
 
 on:
   schedule:
-     - cron: '0 20 * * *'  # UTC 20:00 (北京时间次日 04:00)
+    - cron: '30 19 * * *'  # UTC 19:30 (北京时间次日 03:30)
   workflow_dispatch:
 
 jobs:
@@ -10,39 +10,38 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    # 1. 检出 main 分支获取 Python 脚本
-    - name: Checkout main
+    # 1. 检出 gh-pages 分支
+    - name: Checkout gh-pages
+      uses: actions/checkout@v2
+      with:
+        ref: gh-pages
+    
+    # 2. 检出 main 分支的 Python 脚本到临时目录
+    - name: Checkout main for script
       uses: actions/checkout@v2
       with:
         ref: main
+        path: temp-main
     
-    # 2. 设置 Python
+    # 3. 设置 Python
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
     
-    # 3. 运行 Python 脚本
+    # 4. 运行 Python 脚本（使用正确的路径）
     - name: Run Python script
       run: |
-        python scripts/num.py
-        ls -la files/  # 检查生成的文件
+        # 复制脚本到当前目录
+        cp temp-main/scripts/num.py .
+        # 运行脚本
+        python num.py
     
-    # 4. 检出 gh-pages 分支
-    - name: Checkout gh-pages
-      uses: actions/checkout@v2
-      with:
-        ref: gh-pages
-        path: gh-pages
-    
-    # 5. 更新文件
-    - name: Update files
+    # 5. 提交更改
+    - name: Commit and push if changed
       run: |
-        mkdir -p gh-pages/files
-        cp -r files/* gh-pages/files/
-        cd gh-pages
         git config user.name 'GitHub Action'
         git config user.email 'action@github.com'
-        git add -A
-        git commit -m "Update numbers $(date -u)" || exit 0
+        git add files/
+        git commit -m "Update numbers for $(date '+%Y-%m-%d')" || exit 0
         git push
