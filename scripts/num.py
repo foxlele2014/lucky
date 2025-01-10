@@ -62,6 +62,7 @@ def giveNumByWeekDay():
   elif weekDay == 1 or weekDay == 3 or weekDay == 6:
     num = guessRichCount(33, 16, 6, 1)
   else:
+    num = '今天休息'
     print("今天不开奖")
 
   filePath = './files/' + month + '.json';
