@@ -2,7 +2,7 @@ name: Daily Update Numbers
 
 on:
   schedule:
-    - cron: '30 19 * * *'  # UTC 19:30 (北京时间次日 03:30)
+    - cron: '30 3 * * *'  # (北京每天凌晨 03:30)
   workflow_dispatch:
 
 jobs:
